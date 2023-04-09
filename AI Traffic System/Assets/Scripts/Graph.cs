@@ -7,7 +7,7 @@ public class Graph : MonoBehaviour
     public static Graph Instance;
     List<Edge> edges = new List<Edge>();
     List<Node> nodes = new List<Node>();
-    List<Node> pathList = new List<Node>();
+    //List<Node> pathList = new List<Node>();
 
     void Awake()
     {
@@ -63,7 +63,7 @@ public class Graph : MonoBehaviour
         }
     }
 
-    Node findNode(GameObject id)
+/*    Node findNode(GameObject id)
     {
         foreach (Node n in nodes)
         {
@@ -90,7 +90,7 @@ public class Graph : MonoBehaviour
         {
             Debug.Log(n.getId().name);
         }
-    }
+    }*/
 
 
     //public Node[] AStar(GameObject startId, GameObject endId)
@@ -216,10 +216,9 @@ public class Graph : MonoBehaviour
         //draw edges
         for (int i = 0; i < edges.Count; i++)
         {
-            Debug.DrawLine(edges[i].startNode.getId().transform.position, edges[i].endNode.getId().transform.position, Color.red);
-            Vector3 to = (edges[i].startNode.getId().transform.position - edges[i].endNode.getId().transform.position) * 0.05f;
-            Debug.DrawRay(edges[i].endNode.getId().transform.position, to, Color.blue);
-
+            Debug.DrawLine(edges[i].startNode.transform.position, edges[i].endNode.transform.position, Color.red);
+            Vector3 to = (edges[i].startNode.transform.position - edges[i].endNode.transform.position) * 0.05f;
+            Debug.DrawRay(edges[i].endNode.transform.position, to, Color.blue);
         }
     }
 

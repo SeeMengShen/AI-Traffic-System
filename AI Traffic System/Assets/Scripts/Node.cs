@@ -7,7 +7,7 @@ public class Node : MonoBehaviour
 {
     //public List<Edge> edgelist = new List<Edge>();
     //public Node path = null;
-	private GameObject id;
+	//private GameObject id;
 	public float xPos;
 	public float yPos;
 	public float zPos;
@@ -26,16 +26,15 @@ public class Node : MonoBehaviour
 
     void Awake()
     {
-		id = gameObject;
         xPos = transform.position.x;
         yPos = transform.position.y;
         zPos = transform.position.z;
     }
 
-    public GameObject getId()
+    /*public GameObject getId()
 	{
 		return id;
-	}
+	}*/
 
 	public Node getCameFrom()
 	{
