@@ -4,7 +4,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class JunctionManager : MonoBehaviour
+public class JunctionManager : Node
 {
     public float radius;
     private float sqrRadius;
@@ -84,8 +84,9 @@ public class JunctionManager : MonoBehaviour
         return offset.sqrMagnitude < sqrRadius;
     }
 
-    void OnDrawGizmosSelected()
+    protected override void OnDrawGizmosSelected()
     {
+        base.OnDrawGizmosSelected();
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(gameObject.transform.position, radius);
     }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using static UnityEngine.GraphicsBuffer;
 
+[DisallowMultipleComponent]
 public class Node : MonoBehaviour
 {
     //public List<Edge> edgelist = new List<Edge>();
@@ -46,7 +47,7 @@ public class Node : MonoBehaviour
 		this.cameFrom = cF;
 	}
 
-    void OnDrawGizmosSelected()
+    protected virtual void OnDrawGizmosSelected()
     {
 		foreach (Node n in toNode)
 		{
@@ -56,7 +57,6 @@ public class Node : MonoBehaviour
                 Gizmos.color = Color.blue;
                 Gizmos.DrawLine(transform.position, n.transform.position);
             }
-        }
-        
+        }        
     }
 }

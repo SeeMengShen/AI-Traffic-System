@@ -98,7 +98,6 @@ public class Graph : MonoBehaviour
     {
         if (start == null || end == null)
         {
-            Debug.Log(0);
             return null;
         }
 
@@ -118,10 +117,8 @@ public class Graph : MonoBehaviour
             Node thisnode = open[i];
             if (thisnode == end)  //path found
             {
-                Debug.Log(2);
                 return reconstructPath(start, end);
             }
-            Debug.Log(3);
             open.RemoveAt(i);
             closed.Add(thisnode);
 
@@ -158,7 +155,6 @@ public class Graph : MonoBehaviour
             }
 
         }
-        Debug.Log(1);
         return null;
     }
 

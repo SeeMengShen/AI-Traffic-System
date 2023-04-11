@@ -28,6 +28,7 @@ public class Vehicle : MonoBehaviour
     private GameObject stopTarget;
 
     private const string NODE_STR = "Node";
+    private const string VEHICLE_STR = "Vehicle";
 
     private float rayOffset;
 
@@ -97,7 +98,15 @@ public class Vehicle : MonoBehaviour
 
         if (stopTarget.CompareTag(NODE_STR))
         {
-            sqrDistanceStop = stopTarget.GetComponent<JunctionManager>().radius;
+            if(stopTarget.GetComponent<JunctionManager>() != null)
+            {
+                sqrDistanceStop = stopTarget.GetComponent<JunctionManager>().radius;
+            }
+            else if(stopTarget.GetComponent<TrafficLight>() != null)
+            {
+                sqrDistanceStop = stopTarget.GetComponentInChildren<TrafficLight>().radius;
+            }
+            
             sqrDistanceStop *= sqrDistanceStop;
 
             sqrDistanceSlow = sqrDistanceStop * 0.8f;
@@ -156,12 +165,28 @@ public class Vehicle : MonoBehaviour
             isLeftStraightHit = true;
             Debug.Log("HitStraightLeft");
             Debug.Log(leftStraightHit.collider.gameObject.name);
+
+            if (leftStraightHit.collider.CompareTag(VEHICLE_STR))
+            {
+                Debug.Log("Stop");
+                setStopTarget(leftStraightHit.transform.gameObject);
+                switchState(Vehicle.StateList.stop);
+                return;
+            }
         }
         if (Physics.Raycast(offsetRightPosition, transform.forward, out rightStraightHit, 5.0f, layerMask))
         {
             isRightStraightHit = true;
             Debug.Log("HitStraightRight");
             Debug.Log(rightStraightHit.collider.gameObject.name);
+
+            if (rightStraightHit.collider.CompareTag(VEHICLE_STR))
+            {
+                Debug.Log("Stop");
+                setStopTarget(rightStraightHit.transform.gameObject);
+                switchState(Vehicle.StateList.stop);
+                return;
+            }
         }
         if (Physics.Raycast(offsetLeftPosition, leftNarrowDir, out leftNarrowHit, 5.0f, layerMask))
         {
@@ -182,17 +207,17 @@ public class Vehicle : MonoBehaviour
             return;
         }
 
-        if(isLeftNarrowHit)
+        if (isLeftNarrowHit)
         {
             if (Physics.Raycast(offsetLeftPosition, leftWideDir, out leftWideHit, 5.0f, layerMask))
             {
                 isLeftWideHit = true;
                 Debug.Log("HitLeftWide");
             }
-            
+
         }
 
-        if(isRightNarrowHit)
+        if (isRightNarrowHit)
         {
             if (Physics.Raycast(offsetRightPosition, rightWideDir, out rightWideHit, 5.0f, layerMask))
             {
@@ -230,7 +255,7 @@ public class Vehicle : MonoBehaviour
             //Move
             Vector3 direction = path[currentWP].transform.position - transform.position;
             float rotateFactor = 1f;
-            
+
 
             if (isLeftStraightHit)
             {
@@ -241,7 +266,7 @@ public class Vehicle : MonoBehaviour
                 {
                     rotateFactor *= 2;
 
-                    if(isLeftWideHit)
+                    if (isLeftWideHit)
                     {
                         rotateFactor *= 2;
                     }
