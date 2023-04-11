@@ -25,8 +25,11 @@ public class Vehicle : MonoBehaviour
     bool isLeftStraightHit, isRightStraightHit, isLeftNarrowHit, isRightNarrowHit, isLeftWideHit, isRightWideHit;
     int layerMask;
 
+    private GameObject stopTarget;
+
+    private const string NODE_STR = "Node";
+
     private float rayOffset;
-    bool stopped;
 
     //private Collider obstacle;
 
@@ -34,6 +37,7 @@ public class Vehicle : MonoBehaviour
     {
         stop,
         moving,
+        junctionStop,
         evading
     }
 
@@ -84,26 +88,33 @@ public class Vehicle : MonoBehaviour
 
     void stop()
     {
-        Debug.Log(1);
-        Vector3 direction = leftStraightHit.transform.position - transform.position;
+        Vector3 direction = stopTarget.transform.position - transform.position;
+
         float distance = direction.sqrMagnitude;
         float targetSpeed;
-        if (distance < sqrKeepDistStop)
+        float sqrDistanceStop = sqrKeepDistStop;
+        float sqrDistanceSlow = sqrKeepDistSlow;
+
+        if (stopTarget.CompareTag(NODE_STR))
         {
-            Debug.Log(2);
-            stopped = true;
+            sqrDistanceStop = stopTarget.GetComponent<JunctionManager>().radius;
+            sqrDistanceStop *= sqrDistanceStop;
+
+            sqrDistanceSlow = sqrDistanceStop * 0.8f;
+        }
+
+        if (distance < sqrDistanceStop)
+        {
             return;
         }
 
-        if (distance > sqrKeepDistSlow)
+        if (distance > sqrDistanceSlow)
         {
-            Debug.Log(3);
             targetSpeed = speed;
             switchState(StateList.moving);
         }
         else
         {
-            Debug.Log(4);
             targetSpeed = speed * direction.magnitude / keepDistanceSlow;
         }
         transform.Translate(0.0f, 0.0f, Time.deltaTime * targetSpeed);
@@ -166,6 +177,7 @@ public class Vehicle : MonoBehaviour
         if (isLeftStraightHit && isRightStraightHit)
         {
             Debug.Log("Stop");
+            setStopTarget(leftStraightHit.transform.gameObject);
             switchState(Vehicle.StateList.stop);
             return;
         }
@@ -199,8 +211,6 @@ public class Vehicle : MonoBehaviour
         // if there is no path or at the end don't do anything
         if (currentWP == path.Length)
         {
-            Debug.Log("End");
-            Destroy(this);
             return;
         }
 
@@ -287,5 +297,10 @@ public class Vehicle : MonoBehaviour
             switchState(StateList.moving);
         }
         transform.Translate(0.0f, 0.0f, Time.deltaTime * speed);*/
+    }
+
+    public void setStopTarget(GameObject target)
+    {
+        stopTarget = target;
     }
 }

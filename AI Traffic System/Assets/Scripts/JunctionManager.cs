@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class JunctionManager : MonoBehaviour
 {
     public float radius;
     private float sqrRadius;
-    private Vehicle[] vehicles;
+    private List<Vehicle> vehicles = new List<Vehicle>();
     private Vector3 offset;
-    private Queue<Vehicle> queue;
+    public Queue<Vehicle> queue = new Queue<Vehicle>();
     private Vehicle currentMoving;
     private bool clearToMove;
 
@@ -16,11 +18,14 @@ public class JunctionManager : MonoBehaviour
     void Start()
     {
         GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("Vehicle");
+
         for (int i = 0; i < gameObjects.Length; i++)
         {
-            vehicles[i] = gameObjects[i].GetComponent<Vehicle>();
+            vehicles.Add(gameObjects[i].GetComponent<Vehicle>());
         }
         sqrRadius = radius * radius;
+
+        clearToMove = true;
     }
 
     // Update is called once per frame
@@ -28,11 +33,19 @@ public class JunctionManager : MonoBehaviour
     {
         foreach (Vehicle v in vehicles)
         {
+            if (v.IsUnityNull())
+            {
+                vehicles.Remove(v);
+                Destroy(v.gameObject);
+            }
+
             if (withinRange(v.transform.position))
             {
                 if(!queue.Contains(v))
                 {
+                    Debug.Log(-1);
                     queue.Enqueue(v);
+                    v.setStopTarget(gameObject);
                     v.switchState(Vehicle.StateList.stop);
                 }                
             }
@@ -48,16 +61,19 @@ public class JunctionManager : MonoBehaviour
                 }
                 else
                 {
+                    queue.Dequeue();
                     clearToMove = true;
                     currentMoving = null;
                 }
             }
-
-            if (clearToMove)
+            else
             {
-                currentMoving = queue.Dequeue();
-                currentMoving.switchState(Vehicle.StateList.moving);
-            }
+                if (clearToMove)
+                {
+                    currentMoving = queue.Peek();
+                    currentMoving.switchState(Vehicle.StateList.moving);
+                }
+            }            
         }
     }
 
@@ -71,6 +87,6 @@ public class JunctionManager : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(gameObject.transform.position, radius);
+        Gizmos.DrawWireSphere(gameObject.transform.position, radius);
     }
 }
