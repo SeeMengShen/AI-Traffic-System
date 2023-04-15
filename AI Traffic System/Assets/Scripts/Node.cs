@@ -6,14 +6,16 @@ using static UnityEngine.GraphicsBuffer;
 [DisallowMultipleComponent]
 public class Node : MonoBehaviour
 {
-    //public List<Edge> edgelist = new List<Edge>();
-    //public Node path = null;
+	//public List<Edge> edgelist = new List<Edge>();
+	//public Node path = null;
 	//private GameObject id;
-	public float xPos;
-	public float yPos;
-	public float zPos;
-	public float f, g, h;
+	/*	public float xPos;
+		public float yPos;
+		public float zPos;*/
+	private float f, g, h;
 	private Node cameFrom;
+
+	[Tooltip("Set the available route for this node")]
 	public Node[] toNode;
 
     /*public Node(GameObject i)
@@ -25,26 +27,56 @@ public class Node : MonoBehaviour
 		//path = null;
 	}*/
 
-    void Awake()
+/*    void Awake()
     {
         xPos = transform.position.x;
         yPos = transform.position.y;
         zPos = transform.position.z;
-    }
+    }*/
 
     /*public GameObject getId()
 	{
 		return id;
 	}*/
 
-	public Node getCameFrom()
+	public float getF()
+	{
+		return f;
+	}
+
+	public float getG()
+	{
+		return g;
+	}
+
+	public float getH()
+	{
+		return h;
+	}
+
+	public Node GetCameFrom()
 	{
 		return cameFrom;
 	}
 
-	public void setCameFrom(Node cF)
+	public void setF(float newF)
 	{
-		this.cameFrom = cF;
+		f = newF;
+	}
+
+	public void setG(float newG)
+	{
+		g = newG;
+	}
+
+	public void setH(float newH)
+	{
+		h = newH;
+	}
+
+	public void SetCameFrom(Node cF)
+	{
+		cameFrom = cF;
 	}
 
     protected virtual void OnDrawGizmosSelected()

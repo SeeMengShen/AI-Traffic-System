@@ -6,23 +6,22 @@ using UnityEngine;
 
 public class JunctionManager : Node
 {
+    [Tooltip("The radius of the junction, it is recommended to cover 1 node from each road")]
     public float radius;
     private float sqrRadius;
-    private List<Vehicle> vehicles = new List<Vehicle>();
+
     private Vector3 offset;
-    public Queue<Vehicle> queue = new Queue<Vehicle>();
+
+    [Tooltip("For you to check the queue of the junction")]
+    [SerializeField] private Queue<Vehicle> queue = new Queue<Vehicle>();
+
     private Vehicle currentMoving;
     private bool clearToMove;
 
     // Start is called before the first frame update
     void Start()
     {
-        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("Vehicle");
-
-        for (int i = 0; i < gameObjects.Length; i++)
-        {
-            vehicles.Add(gameObjects[i].GetComponent<Vehicle>());
-        }
+        // Compute the squared radius for distance comaprison
         sqrRadius = radius * radius;
 
         clearToMove = true;
@@ -31,53 +30,65 @@ public class JunctionManager : Node
     // Update is called once per frame
     void Update()
     {
-        foreach (Vehicle v in vehicles)
+        // Check for each vehicle in the scene
+        foreach (Vehicle v in VehicleManager.Instance.GetVehicles())
         {
-            if (v.IsUnityNull())
+            // If they are within the radius range
+            if (WithinRange(v.transform.position))
             {
-                vehicles.Remove(v);
-                Destroy(v.gameObject);
-            }
-
-            if (withinRange(v.transform.position))
-            {
-                if(!queue.Contains(v))
+                // and does not exists in the queue
+                if (!queue.Contains(v))
                 {
-                    Debug.Log(-1);
+                    // Add them into the queue
                     queue.Enqueue(v);
-                    v.setStopTarget(gameObject);
-                    v.switchState(Vehicle.StateList.stop);
-                }                
+
+                    // Switch their state to Stop State
+                    v.SetStop(gameObject);
+                }
             }
         }
 
+        // If there are vehicles in the queue
         if (queue.Count > 0)
         {
+            // If the current moving vehicle exists
             if (currentMoving != null)
             {
-                if (withinRange(currentMoving.transform.position))
+                // and it is still moving within the junction radius range
+                if (WithinRange(currentMoving.transform.position))
                 {
+                    // The junction is not clear to move
                     clearToMove = false;
                 }
-                else
+                else // the current moving vehicle is out of the junction radius range
                 {
+                    // Remove it from the queue
                     queue.Dequeue();
+
+                    // The junction is clear to move now
                     clearToMove = true;
+
+                    // Set the current moving to null
                     currentMoving = null;
                 }
             }
-            else
+            else // There is no current moving vehicle
             {
+                // If the junction is clear to move
                 if (clearToMove)
                 {
+                    // Take the first vehicle from the queue and set it as current moving vehicle
                     currentMoving = queue.Peek();
-                    currentMoving.switchState(Vehicle.StateList.moving);
+
+                    // Switch its state to Moving State
+                    currentMoving.SwitchState(Vehicle.StateList.moving);
                 }
-            }            
+            }
         }
     }
 
-    bool withinRange(Vector3 other)
+    // Check whether the vehicle is within the range of radius
+    bool WithinRange(Vector3 other)
     {
         offset = transform.position - other;
 

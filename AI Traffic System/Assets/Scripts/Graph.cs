@@ -24,6 +24,9 @@ public class Graph : MonoBehaviour
 
         foreach(GameObject n in nodeObj)
         {
+            Destroy(n.GetComponent<Collider>());
+            Destroy(n.GetComponent<Renderer>());
+
             node = n.GetComponent<Node>();
             nodes.Add(node);
 
@@ -106,18 +109,18 @@ public class Graph : MonoBehaviour
         float tentative_g_score = 0;
         bool tentative_is_better;
 
-        start.g = 0;
-        start.h = distance(start, end);
-        start.f = start.h;
+        start.setG(0f);
+        start.setH(Distance(start, end));
+        start.setF(start.getH());
         open.Add(start);
 
         while (open.Count > 0)
         {
-            int i = lowestF(open);
+            int i = LowestF(open);
             Node thisnode = open[i];
             if (thisnode == end)  //path found
             {
-                return reconstructPath(start, end);
+                return ReconstructPath(start, end);
             }
             open.RemoveAt(i);
             closed.Add(thisnode);
@@ -126,19 +129,19 @@ public class Graph : MonoBehaviour
             foreach (Node neighbour in thisnode.toNode)
             {
                 //neighbour = e.endNode;
-                neighbour.g = thisnode.g + distance(thisnode, neighbour);
+                neighbour.setG(thisnode.getG() + Distance(thisnode, neighbour));
 
                 if (closed.IndexOf(neighbour) > -1)
                     continue;
 
-                tentative_g_score = thisnode.g + distance(thisnode, neighbour);
+                tentative_g_score = thisnode.getG() + Distance(thisnode, neighbour);
 
                 if (open.IndexOf(neighbour) == -1)
                 {
                     open.Add(neighbour);
                     tentative_is_better = true;
                 }
-                else if (tentative_g_score < neighbour.g)
+                else if (tentative_g_score < neighbour.getG())
                 {
                     tentative_is_better = true;
                 }
@@ -147,10 +150,10 @@ public class Graph : MonoBehaviour
 
                 if (tentative_is_better)
                 {
-                    neighbour.setCameFrom(thisnode);
-                    neighbour.g = tentative_g_score;
-                    neighbour.h = distance(thisnode, end);
-                    neighbour.f = neighbour.g + neighbour.h;
+                    neighbour.SetCameFrom(thisnode);
+                    neighbour.setG(tentative_g_score);
+                    neighbour.setH(Distance(thisnode, end));
+                    neighbour.setF(neighbour.getG() + neighbour.getH());
                 }                
             }
 
@@ -158,33 +161,38 @@ public class Graph : MonoBehaviour
         return null;
     }
 
-    public Node[] reconstructPath(Node startId, Node endId)
+    public Node[] ReconstructPath(Node startId, Node endId)
     {
         List<Node> pathList = new List<Node>();
         pathList.Clear();
         pathList.Add(endId);
 
-        var p = endId.getCameFrom();
+        var p = endId.GetCameFrom();
         while (p != startId && p != null)
         {
             pathList.Insert(0, p);
-            p = p.getCameFrom();
+            p = p.GetCameFrom();
         }
         pathList.Insert(0, startId);
 
         return pathList.ToArray();
     }
 
-    float distance(Node a, Node b)
+    float Distance(Node a, Node b)
     {
-        float dx = a.xPos - b.xPos;
+        /*float dx = a.xPos - b.xPos;
         float dy = a.yPos - b.yPos;
-        float dz = a.zPos - b.zPos;
+        float dz = a.zPos - b.zPos;*/
+
+        float dx = a.transform.position.x - b.transform.position.x;
+        float dy = a.transform.position.y - b.transform.position.y;
+        float dz = a.transform.position.z - b.transform.position.z;
+
         float dist = dx * dx + dy * dy + dz * dz;
-        return (dist);
+        return dist;
     }
 
-    int lowestF(List<Node> l)
+    int LowestF(List<Node> l)
     {
         float lowestf = 0;
         int count = 0;
@@ -194,12 +202,12 @@ public class Graph : MonoBehaviour
         {
             if (i == 0)
             {
-                lowestf = l[i].f;
+                lowestf = l[i].getF();
                 iteratorCount = count;
             }
-            else if (l[i].f <= lowestf)
+            else if (l[i].getF() <= lowestf)
             {
-                lowestf = l[i].f;
+                lowestf = l[i].getF();
                 iteratorCount = count;
             }
             count++;
@@ -207,7 +215,7 @@ public class Graph : MonoBehaviour
         return iteratorCount;
     }
 
-    public void debugDraw()
+    public void DebugDraw()
     {
         //draw edges
         for (int i = 0; i < edges.Count; i++)

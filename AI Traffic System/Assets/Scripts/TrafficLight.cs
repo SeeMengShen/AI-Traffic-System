@@ -6,13 +6,15 @@ using UnityEngine.UIElements.Experimental;
 
 public class TrafficLight : MonoBehaviour
 {
+    [Tooltip("The radius of the node with traffic light")]
     public float radius;
     private float sqrRadius;
-    private List<Vehicle> vehicles = new List<Vehicle>();
+
     private Vector3 offset;
+
+    // State
     delegate void TrafficLightState();
     private TrafficLightState state;
-
     public enum StateList
     {
         green,
@@ -22,13 +24,7 @@ public class TrafficLight : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("Vehicle");
-
-        for (int i = 0; i < gameObjects.Length; i++)
-        {
-            vehicles.Add(gameObjects[i].GetComponent<Vehicle>());
-        }
-
+        // Compute the squared value for distance computation
         sqrRadius = radius * radius;
     }
 
@@ -38,45 +34,54 @@ public class TrafficLight : MonoBehaviour
         state?.Invoke();
     }
 
-    public void switchState(StateList stateEnum)
+    // Call this to switch state
+    public void SwitchState(StateList stateEnum)
     {
         switch (stateEnum)
         {
             case StateList.green:
-                state = green;
+                state = Green;
                 break;
             case StateList.red:
-                state = red;
+                state = Red;
                 break;
             default:
                 break;
         }
     }
 
-    public void red()
+    // When the traffic light is in Red State
+    public void Red()
     {
-        foreach (Vehicle v in vehicles)
+        // Check every vehicle
+        foreach (Vehicle v in VehicleManager.Instance.GetVehicles())
         {
-            if (withinRange(v.transform.position))
+            // If they are within the range of node with traffic light
+            if (WithinRange(v.transform.position))
             {
-                v.setStopTarget(transform.parent.gameObject);
-                v.switchState(Vehicle.StateList.stop);
+                // Switch to Stop State
+                v.SetStop(transform.parent.gameObject);
             }
         }
     }
 
-    public void green()
+    // When the traffic light is in Red State
+    public void Green()
     {
-        foreach (Vehicle v in vehicles)
+        // Check every vehicle
+        foreach (Vehicle v in VehicleManager.Instance.GetVehicles())
         {
-            if (withinRange(v.transform.position))
+            // If they are within the range of node with traffic light
+            if (WithinRange(v.transform.position))
             {
-                v.switchState(Vehicle.StateList.moving);
+                // Switch to Moving State
+                v.SwitchState(Vehicle.StateList.moving);
             }
         }
     }
 
-    bool withinRange(Vector3 other)
+    // Check whether the vehicle is within the node with traffic light radius range
+    bool WithinRange(Vector3 other)
     {
         offset = transform.parent.position - other;
 
