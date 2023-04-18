@@ -6,7 +6,7 @@ public class Graph : MonoBehaviour
 {
     public static Graph Instance;
     List<Edge> edges = new List<Edge>();
-    List<Node> nodes = new List<Node>();
+    public List<Node> nodes = new List<Node>();
     //List<Node> pathList = new List<Node>();
 
     void Awake()
@@ -22,20 +22,19 @@ public class Graph : MonoBehaviour
         GameObject[] nodeObj = GameObject.FindGameObjectsWithTag("Node");
         Node node;
 
-        foreach(GameObject n in nodeObj)
+        foreach (GameObject n in nodeObj)
         {
             Destroy(n.GetComponent<Collider>());
             Destroy(n.GetComponent<Renderer>());
 
             node = n.GetComponent<Node>();
             nodes.Add(node);
-
-            foreach(Node nextNode in node.toNode)
+            foreach (Node nextNode in node.toNode)
             {
-                if(nextNode.toNode !=  null)
+                if (nextNode.toNode != null)
                 {
                     AddEdge(node, nextNode);
-                }                
+                }
             }
         }
     }
@@ -66,34 +65,34 @@ public class Graph : MonoBehaviour
         }
     }
 
-/*    Node findNode(GameObject id)
-    {
-        foreach (Node n in nodes)
+    /*    Node findNode(GameObject id)
         {
-            if (n.getId() == id)
-                return n;
+            foreach (Node n in nodes)
+            {
+                if (n.getId() == id)
+                    return n;
+            }
+            return null;
         }
-        return null;
-    }
 
 
-    public int getPathLength()
-    {
-        return pathList.Count;
-    }
-
-    public GameObject getPathPoint(int index)
-    {
-        return pathList[index].getId();
-    }
-
-    public void printPath()
-    {
-        foreach (Node n in pathList)
+        public int getPathLength()
         {
-            Debug.Log(n.getId().name);
+            return pathList.Count;
         }
-    }*/
+
+        public GameObject getPathPoint(int index)
+        {
+            return pathList[index].getId();
+        }
+
+        public void printPath()
+        {
+            foreach (Node n in pathList)
+            {
+                Debug.Log(n.getId().name);
+            }
+        }*/
 
 
     //public Node[] AStar(GameObject startId, GameObject endId)
@@ -109,9 +108,9 @@ public class Graph : MonoBehaviour
         float tentative_g_score = 0;
         bool tentative_is_better;
 
-        start.setG(0f);
-        start.setH(Distance(start, end));
-        start.setF(start.getH());
+        start.SetG(0f);
+        start.SetH(Distance(start, end));
+        start.SetF(start.GetH());
         open.Add(start);
 
         while (open.Count > 0)
@@ -129,19 +128,19 @@ public class Graph : MonoBehaviour
             foreach (Node neighbour in thisnode.toNode)
             {
                 //neighbour = e.endNode;
-                neighbour.setG(thisnode.getG() + Distance(thisnode, neighbour));
+                neighbour.SetG(thisnode.GetG() + Distance(thisnode, neighbour));
 
                 if (closed.IndexOf(neighbour) > -1)
                     continue;
 
-                tentative_g_score = thisnode.getG() + Distance(thisnode, neighbour);
+                tentative_g_score = thisnode.GetG() + Distance(thisnode, neighbour);
 
                 if (open.IndexOf(neighbour) == -1)
                 {
                     open.Add(neighbour);
                     tentative_is_better = true;
                 }
-                else if (tentative_g_score < neighbour.getG())
+                else if (tentative_g_score < neighbour.GetG())
                 {
                     tentative_is_better = true;
                 }
@@ -151,10 +150,10 @@ public class Graph : MonoBehaviour
                 if (tentative_is_better)
                 {
                     neighbour.SetCameFrom(thisnode);
-                    neighbour.setG(tentative_g_score);
-                    neighbour.setH(Distance(thisnode, end));
-                    neighbour.setF(neighbour.getG() + neighbour.getH());
-                }                
+                    neighbour.SetG(tentative_g_score);
+                    neighbour.SetH(Distance(thisnode, end));
+                    neighbour.SetF(neighbour.GetG() + neighbour.GetH());
+                }
             }
 
         }
@@ -183,6 +182,15 @@ public class Graph : MonoBehaviour
         /*float dx = a.xPos - b.xPos;
         float dy = a.yPos - b.yPos;
         float dz = a.zPos - b.zPos;*/
+        if (a == null)
+        {
+            Debug.Log(a.name);
+        }
+
+        if (b == null)
+        {
+            Debug.Log(b.name);
+        }
 
         float dx = a.transform.position.x - b.transform.position.x;
         float dy = a.transform.position.y - b.transform.position.y;
@@ -202,12 +210,12 @@ public class Graph : MonoBehaviour
         {
             if (i == 0)
             {
-                lowestf = l[i].getF();
+                lowestf = l[i].GetF();
                 iteratorCount = count;
             }
-            else if (l[i].getF() <= lowestf)
+            else if (l[i].GetF() <= lowestf)
             {
-                lowestf = l[i].getF();
+                lowestf = l[i].GetF();
                 iteratorCount = count;
             }
             count++;
@@ -215,15 +223,15 @@ public class Graph : MonoBehaviour
         return iteratorCount;
     }
 
-    public void DebugDraw()
-    {
-        //draw edges
-        for (int i = 0; i < edges.Count; i++)
+    /*    public void DebugDraw()
         {
-            Debug.DrawLine(edges[i].startNode.transform.position, edges[i].endNode.transform.position, Color.red);
-            Vector3 to = (edges[i].startNode.transform.position - edges[i].endNode.transform.position) * 0.05f;
-            Debug.DrawRay(edges[i].endNode.transform.position, to, Color.blue);
-        }
-    }
+            //draw edges
+            for (int i = 0; i < edges.Count; i++)
+            {
+                Debug.DrawLine(edges[i].startNode.transform.position, edges[i].endNode.transform.position, Color.red);
+                Vector3 to = (edges[i].startNode.transform.position - edges[i].endNode.transform.position) * 0.05f;
+                Debug.DrawRay(edges[i].endNode.transform.position, to, Color.blue);
+            }
+        }*/
 
 }

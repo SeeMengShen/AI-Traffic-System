@@ -13,9 +13,9 @@ public class JunctionManager : Node
     private Vector3 offset;
 
     [Tooltip("For you to check the queue of the junction")]
-    [SerializeField] private Queue<Vehicle> queue = new Queue<Vehicle>();
+    [SerializeField] public Queue<Vehicle> queue = new Queue<Vehicle>();
 
-    private Vehicle currentMoving;
+    public Vehicle currentMoving;
     private bool clearToMove;
 
     // Start is called before the first frame update
@@ -42,6 +42,9 @@ public class JunctionManager : Node
                     // Add them into the queue
                     queue.Enqueue(v);
 
+                    // Set the current moving inJunction value to true
+                    v.inJunction = true;
+
                     // Switch their state to Stop State
                     v.SetStop(gameObject);
                 }
@@ -67,6 +70,9 @@ public class JunctionManager : Node
 
                     // The junction is clear to move now
                     clearToMove = true;
+
+                    // Set the current moving inJunction value to false
+                    currentMoving.inJunction = false;
 
                     // Set the current moving to null
                     currentMoving = null;

@@ -155,6 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 2
   toNode: []
 --- !u!135 &114166413
 SphereCollider:
@@ -772,6 +773,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 1
   toNode:
   - {fileID: 1740734902}
 --- !u!135 &296572310
@@ -1236,10 +1238,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   toNode:
-  - {fileID: 1631381786}
-  - {fileID: 1366828637}
   - {fileID: 707248081}
+  - {fileID: 1366828637}
+  - {fileID: 1631381786}
 --- !u!135 &403570062
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1467,6 +1470,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 1
   toNode:
   - {fileID: 403570061}
 --- !u!135 &511683509
@@ -1629,10 +1633,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   toNode:
+  - {fileID: 1096113056}
   - {fileID: 2096399525}
   - {fileID: 707248081}
-  - {fileID: 1096113056}
 --- !u!135 &545550999
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1983,6 +1988,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 993927cc43bb98640827356aa1a5b54a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   toNode:
   - {fileID: 2096399525}
   - {fileID: 1631381786}
@@ -2285,6 +2291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 2
   toNode: []
 --- !u!135 &885188418
 SphereCollider:
@@ -3071,11 +3078,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 734ce5f0f5c48a44a8b6210554f4a048, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toNode:
-  - {fileID: 2096399525}
-  - {fileID: 1631381786}
-  - {fileID: 1366828637}
-  - {fileID: 1096113056}
+  type: 0
+  toNode: []
   radius: 9
 --- !u!135 &1003849377
 SphereCollider:
@@ -3287,10 +3291,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   toNode:
   - {fileID: 2096399525}
-  - {fileID: 707248081}
   - {fileID: 1631381786}
+  - {fileID: 707248081}
 --- !u!135 &1069092504
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3402,6 +3407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   toNode:
   - {fileID: 885188417}
 --- !u!135 &1096113057
@@ -3985,6 +3991,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   toNode:
   - {fileID: 114166412}
 --- !u!135 &1366828638
@@ -4295,6 +4302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 2
   toNode: []
 --- !u!135 &1564949340
 SphereCollider:
@@ -4489,6 +4497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   toNode:
   - {fileID: 1564949339}
 --- !u!135 &1631381787
@@ -4782,10 +4791,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 1
   toNode:
-  - {fileID: 1366828637}
   - {fileID: 707248081}
   - {fileID: 1096113056}
+  - {fileID: 1366828637}
 --- !u!135 &1740734903
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4980,6 +4990,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 2
   toNode: []
 --- !u!135 &1807396856
 SphereCollider:
@@ -5648,6 +5659,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 1
   toNode:
   - {fileID: 545550998}
 --- !u!135 &2022507399
@@ -5760,6 +5772,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 1
   toNode:
   - {fileID: 1069092503}
 --- !u!135 &2029881272
@@ -6234,6 +6247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 547598fa9e55a6c4ca195e2c0fed7b08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   toNode:
   - {fileID: 1807396855}
 --- !u!135 &2096399526
