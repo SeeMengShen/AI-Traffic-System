@@ -17,8 +17,6 @@ public class NodesEditor : Editor
     private const string NODE_STR = "Node";
     GUIStyle style = new GUIStyle();
     private ReorderableList list;
-/*    private GUIContent connectionTypeGUIC = new GUIContent();
-    private string[] connectionTypeArr = { "None", "Entry", "Exit" };*/
 
     protected void OnEnable()
     {
@@ -39,8 +37,6 @@ public class NodesEditor : Editor
             EditorGUI.PropertyField(
                 new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), element, GUIContent.none);
         };
-
-        //connectionTypeGUIC.text = "Connection Type";
     }
 
     protected void OnSceneGUI()
@@ -64,34 +60,9 @@ public class NodesEditor : Editor
     {
         if (node.type == Node.NodeType.start || node.type == Node.NodeType.normal)
         {
-            /*int connectionType = (int) node.GetConnectionType();
-            connectionType = EditorGUILayout.Popup(connectionTypeGUIC, connectionType, connectionTypeArr);*/
-
             serializedObject.Update();
             list.DoLayoutList();
-            serializedObject.ApplyModifiedProperties();           
-
-            //node.SetConnectionType(connectionType);
-
-            /*List<Node> toNodeList = node.GetToNode().ToList();
-            int size = Mathf.Max(0, EditorGUILayout.IntField("Size", toNodeList.Count));
-
-            while (size > toNodeList.Count)
-            {
-                toNodeList.Add(null);
-            }
-
-            while (size < toNodeList.Count)
-            {
-                toNodeList.RemoveAt(toNodeList.Count - 1);
-            }
-            
-            for(int i = 0; i < toNodeList.Count; i++)
-            {
-                toNodeList[i] = EditorGUILayout.ObjectField("Element " + i, toNodeList[i], typeof(Node), true) as Node;
-            }
-
-            node.SetToNode(toNodeList.ToArray());*/
+            serializedObject.ApplyModifiedProperties();
         }
     }
 }
@@ -99,46 +70,13 @@ public class NodesEditor : Editor
 [CustomEditor(typeof(TrafficLightsManager))]
 public class TrafficLightsManagerEditor : NodesEditor
 {
-    /*List<GameObject> nodes = new List<GameObject>();
-    private const string NODE_STR = "Node";
-    GUIStyle style = new GUIStyle();
 
-    private void OnEnable()
-    {
-        base.OnEnable();
-        style.normal.textColor = Color.black;
-        nodes = GameObject.FindGameObjectsWithTag(NODE_STR).ToList();
-    }
-
-    private void OnSceneGUI()
-    {
-        foreach (GameObject node in nodes)
-        {
-            Handles.Label(node.transform.position, node.name, style);
-        }
-    }*/
 }
 
 [CustomEditor(typeof(JunctionManager))]
 public class JunctionsManagerEditor : NodesEditor
 {
-    /*List<GameObject> nodes = new List<GameObject>();
-    private const string NODE_STR = "Node";
-    GUIStyle style = new GUIStyle();
 
-    private void OnEnable()
-    {
-        style.normal.textColor = Color.black;
-        nodes = GameObject.FindGameObjectsWithTag(NODE_STR).ToList();
-    }
-
-    private void OnSceneGUI()
-    {
-        foreach (GameObject node in nodes)
-        {
-            Handles.Label(node.transform.position, node.name, style);
-        }
-    }*/
 }
 
 [CustomEditor(typeof(TrafficLight))]
@@ -174,17 +112,17 @@ public class ConnectionManagerEditor : Editor
     {
         base.OnInspectorGUI();
 
-        if(GUILayout.Button(REFRESH_STR))
+        if (GUILayout.Button(CLEAR_STR))
+        {
+            ConnectionManager.Instance.ClearConnections();
+        }
+        if (GUILayout.Button(REFRESH_STR))
         {
             ConnectionManager.Instance.RefreshNodes();
         }
         else if (GUILayout.Button(CONNECT_STR))
         {
             ConnectionManager.Instance.GenerateConnections();
-        }
-        else if(GUILayout.Button(CLEAR_STR))
-        {
-            ConnectionManager.Instance.ClearConnections();
         }
     }
 }

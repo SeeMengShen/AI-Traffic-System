@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -11,7 +10,7 @@ public class Vehicle : MonoBehaviour
     [SerializeField] private Node[] path;
 
     [Tooltip("For you to check the current waypoint the vehicle on")]
-    [SerializeField] private int currentWP = 0;
+    [SerializeField] private int currentWP;
 
     [Tooltip("The rotation speed of the vehicle (1 is suggested)")]
     public float rotationSpeed;
@@ -70,7 +69,7 @@ public class Vehicle : MonoBehaviour
     private float rayYOffset;
 
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         // Set the initial state to Moving State
         SwitchState(StateList.moving);
@@ -97,6 +96,13 @@ public class Vehicle : MonoBehaviour
             Debug.Log(gameObject.name + " could not find a path, so it chooses to suicide :(");
             VehicleManager.Instance.RemoveVehicle(this);
         }
+
+        //Reset the current waypoint index
+        currentWP = 0;
+
+        // Randomize the speed with the difference value given by user
+        float randomSpeedDiv2 = VehicleManager.Instance.randomSpeed / 2;
+        speed += Random.Range(-randomSpeedDiv2, randomSpeedDiv2);
     }
 
     // Update is called once per frame
@@ -108,7 +114,16 @@ public class Vehicle : MonoBehaviour
         // If it reaches the goal node, destroy itself
         if (currentWP == path.Length)
         {
-            VehicleManager.Instance.RemoveVehicle(this);
+            // If recycle is true, reuse the vehicle, else destroy
+            if (VehicleManager.Instance.recycleVehicle)
+            {
+                VehicleManager.Instance.ReuseVehicle(this);
+            }
+            else
+            {
+                VehicleManager.Instance.RemoveVehicle(this);
+            }
+            
             return;
         }
 
@@ -139,82 +154,6 @@ public class Vehicle : MonoBehaviour
                 break;
         }
     }
-
-    /*void stop()
-    {
-        // Check current waypoint even when in Stop State
-        checkCurrentWayPoint();
-
-        // Get a vector between the stop target and itself
-        Vector3 direction = stopTarget.transform.position - transform.position;
-
-        // Target speed used for controlling moving speed in Stop State
-        float targetSpeed;
-
-        // Get the squared distance between the stop target and itself
-        float sqrDistance = direction.sqrMagnitude;
-
-        // Make a copy of the value to avoid mutating it
-        float sqrDistanceStop = sqrKeepDistStop;
-        float sqrDistanceSlow = sqrKeepDistSlow;
-
-        // Create a larger squared distance for slowing down for exiting the Stop State
-        float largerSqrDistanceSlow = keepDistanceSlow * 1.3f;
-        largerSqrDistanceSlow *= largerSqrDistanceSlow;
-
-        // Reassign the direction to the actual moving target (Way points)
-        direction = path[currentWP].transform.position - transform.position;
-
-        // If the stop target is a type of node (is a junction or a traffic light triggered the Stop State)
-        if (stopTarget.CompareTag(NODE_STR))
-        {
-            // Get the radius from the respective Component and assign as slowing down distance
-            if (stopTarget.GetComponent<JunctionManager>() != null)
-            {
-                sqrDistanceSlow = stopTarget.GetComponent<JunctionManager>().radius;
-            }
-            else if (stopTarget.GetComponent<TrafficLight>() != null)
-            {
-                sqrDistanceSlow = stopTarget.GetComponentInChildren<TrafficLight>().radius;
-            }
-
-            // Copy the value from slowing distance and discount to 80% of it for stopping distance
-            sqrDistanceStop = sqrDistanceSlow;
-            sqrDistanceStop *= 0.8f;
-
-            // Square the value
-            sqrDistanceStop *= sqrDistanceStop;
-            sqrDistanceSlow *= sqrDistanceSlow;
-        }
-
-        // Do nothing if it has reached the stopping distance
-        if (sqrDistance < sqrDistanceStop)
-        {
-            return;
-        }
-
-        // Move with normal speed if it exits the slowing distance
-        if (sqrDistance > sqrDistanceSlow)
-        {
-            Debug.DrawLine(transform.position, stopTarget.transform.position, Color.green);
-            targetSpeed = speed;
-
-            // Exit the Stop State when it has a big distance with the stop target
-            if (sqrDistance > largerSqrDistanceSlow)
-            {
-                switchState(StateList.moving);
-                return;
-            }
-        }
-        else // Gradually slow down according to the ratio of the slowing down distance and their distance (Arrival behaviour)
-        {
-            Debug.DrawLine(transform.position, stopTarget.transform.position, Color.magenta);
-            targetSpeed = speed * (sqrDistance / sqrDistanceSlow);
-        }
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), rotationSpeed * Time.deltaTime);
-
-        transform.Translate(0.0f, 0.0f, Time.deltaTime * targetSpeed);
-    }*/
 
     void Stop()
     {
@@ -344,64 +283,6 @@ public class Vehicle : MonoBehaviour
         transform.Translate(0.0f, 0.0f, Time.deltaTime * targetSpeed);
     }
 
-    /*void moving()
-    {
-        resetHitBool();
-
-        rayCollisionCheck();
-
-        // if there is no path or at the end don't do anything
-        if (currentWP == path.Length)
-        {
-            return;
-        }
-
-        // if we are close enough to the current waypoint, move to next
-        checkCurrentWayPoint();
-
-        // if we are not at the end of path
-        if (currentWP < path.Length)
-        {
-            //Move
-            Vector3 direction = path[currentWP].transform.position - transform.position;
-            float rotateFactor = 1f;
-
-            if (isLeftNarrowStraightHit || isLeftWideStraightHit)
-            {
-                direction = transform.right;
-                rotateFactor = 0.5f;
-
-                if (isLeftNarrowHit)
-                {
-                    rotateFactor *= 2;
-
-                    if (isLeftWideHit)
-                    {
-                        rotateFactor *= 2;
-                    }
-                }
-            }
-            else if (isRightNarrowStraightHit || isRightWideStraightHit)
-            {
-                direction = -transform.right;
-                rotateFactor = 0.5f;
-
-                if (isRightNarrowHit)
-                {
-                    rotateFactor *= 2;
-
-                    if (isRightWideHit)
-                    {
-                        rotateFactor *= 2;
-                    }
-                }
-            }
-
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), rotationSpeed * rotateFactor * Time.deltaTime);
-            transform.Translate(0.0f, 0.0f, Time.deltaTime * speed);
-        }
-    }*/
-
     void Moving()
     {
         // Check obstacle infront
@@ -456,8 +337,6 @@ public class Vehicle : MonoBehaviour
 
     private void RayCollisionCheck()
     {
-        
-
         LayerMask mask;
 
         if (inJunction)
@@ -575,8 +454,8 @@ public class Vehicle : MonoBehaviour
             isRightNarrowHit = true;
         }
 
-        // If both narrow front ray collided, switch to Stop State 
-        if (isLeftNarrowStraightHit && isRightNarrowStraightHit)
+        // If the obstacle is bigger than the vehicle, switch to Stop State 
+        if (isLeftNarrowStraightHit && isRightNarrowStraightHit && isLeftWideStraightHit && isRightWideStraightHit)
         {
             SetStop(leftNarrowStraightHit.transform.gameObject);
             return;
@@ -600,7 +479,7 @@ public class Vehicle : MonoBehaviour
         }
 
         // Uncomment here for chaotic roundabout 2
-        /*if (stopTarget != null)
+        if (stopTarget != null)
         {
             if (stopTarget.CompareTag(VehicleManager.Instance.vehicleTag))
             {
@@ -609,149 +488,8 @@ public class Vehicle : MonoBehaviour
                     SwitchState(StateList.moving);
                 }
             }
-        }*/
+        }
     }
-
-    /*    private void arrivalRayCollisionCheck()
-        {
-            leftNarrowDir = Quaternion.AngleAxis(-narrowCollisionAngle / 2, Vector3.up) * transform.forward;
-            rightNarrowDir = Quaternion.AngleAxis(narrowCollisionAngle / 2, Vector3.up) * transform.forward;
-            leftWideDir = Quaternion.AngleAxis(-wideCollisionAngle / 2, Vector3.up) * transform.forward;
-            rightWideDir = Quaternion.AngleAxis(wideCollisionAngle / 2, Vector3.up) * transform.forward;
-
-            Vector3 narrowOffsetLeftPosition = transform.position;
-            narrowOffsetLeftPosition -= transform.right * rayXOffset / 3;
-            narrowOffsetLeftPosition += transform.forward * rayYOffset;
-            Vector3 narrowOffsetRightPosition = transform.position;
-            narrowOffsetRightPosition += transform.right * rayXOffset / 3;
-            narrowOffsetRightPosition += transform.forward * rayYOffset;
-
-            Vector3 offsetLeftPosition = transform.position;
-            offsetLeftPosition -= transform.right * rayXOffset;
-            Vector3 offsetRightPosition = transform.position;
-            offsetRightPosition += transform.right * rayXOffset;
-
-            if (Physics.Raycast(narrowOffsetLeftPosition, transform.forward, out leftNarrowStraightHit, keepDistanceSlow - rayYOffset, arrivalLayerMask))
-            {
-                isLeftNarrowStraightHit = true;
-
-                if (leftNarrowStraightHit.collider.CompareTag(VEHICLE_STR))
-                {
-                    if (leftNarrowStraightHit.collider.gameObject != gameObject)
-                    {
-                        setStop(leftNarrowStraightHit.transform.gameObject);
-                        return;
-                    }
-                }
-            }
-            if (Physics.Raycast(narrowOffsetRightPosition, transform.forward, out rightNarrowStraightHit, keepDistanceSlow - rayYOffset, arrivalLayerMask))
-            {
-                isRightNarrowStraightHit = true;
-
-                if (rightNarrowStraightHit.collider.CompareTag(VEHICLE_STR))
-                {
-                    if (rightNarrowStraightHit.collider.gameObject != gameObject)
-                    {
-                        setStop(rightNarrowStraightHit.transform.gameObject);
-                        return;
-                    }
-                }
-            }
-            if (Physics.Raycast(offsetLeftPosition, transform.forward, out leftWideStraightHit, keepDistanceSlow, arrivalLayerMask))
-            {
-                isLeftWideStraightHit = true;
-
-                if (leftWideStraightHit.collider.CompareTag(VEHICLE_STR))
-                {
-                    if (leftWideStraightHit.collider.gameObject != gameObject)
-                    {
-                        setStop(leftWideStraightHit.transform.gameObject);
-                        return;
-                    }
-                }
-            }
-            if (Physics.Raycast(offsetRightPosition, transform.forward, out rightWideStraightHit, keepDistanceSlow, arrivalLayerMask))
-            {
-                isRightWideStraightHit = true;
-
-                if (rightWideStraightHit.collider.CompareTag(VEHICLE_STR))
-                {
-                    if (rightWideStraightHit.collider.gameObject != gameObject)
-                    {
-                        setStop(rightWideStraightHit.transform.gameObject);
-                        return;
-                    }
-                }
-            }
-            if (Physics.Raycast(offsetLeftPosition, leftNarrowDir, keepDistanceSlow, arrivalLayerMask))
-            {
-                isLeftNarrowHit = true;
-            }
-            if (Physics.Raycast(offsetRightPosition, rightNarrowDir, keepDistanceSlow, arrivalLayerMask))
-            {
-                isRightNarrowHit = true;
-            }
-            if (isLeftNarrowStraightHit && isRightNarrowStraightHit)
-            {
-                setStop(leftNarrowStraightHit.transform.gameObject);
-                return;
-            }
-            if (isLeftNarrowHit)
-            {
-                if (Physics.Raycast(offsetLeftPosition, leftWideDir, keepDistanceSlow, arrivalLayerMask))
-                {
-                    isLeftWideHit = true;
-                }
-
-            }
-            if (isRightNarrowHit)
-            {
-                if (Physics.Raycast(offsetRightPosition, rightWideDir, keepDistanceSlow, arrivalLayerMask))
-                {
-                    isRightWideHit = true;
-                }
-            }
-
-            Debug.DrawRay(narrowOffsetLeftPosition, transform.forward * (keepDistanceSlow - rayYOffset), Color.black);
-            Debug.DrawRay(narrowOffsetRightPosition, transform.forward * (keepDistanceSlow - rayYOffset), Color.black);
-            Debug.DrawRay(offsetLeftPosition, transform.forward * keepDistanceSlow, Color.black);
-            Debug.DrawRay(offsetRightPosition, transform.forward * keepDistanceSlow, Color.black);
-            Debug.DrawRay(offsetLeftPosition, leftNarrowDir.normalized * keepDistanceSlow, Color.black);
-            Debug.DrawRay(offsetRightPosition, rightNarrowDir.normalized * keepDistanceSlow, Color.black);
-            Debug.DrawRay(offsetLeftPosition, leftWideDir.normalized * keepDistanceSlow, Color.black);
-            Debug.DrawRay(offsetRightPosition, rightWideDir.normalized * keepDistanceSlow, Color.black);
-        }*/
-
-    /*    void evading()
-        {
-            Debug.Log("Evading");
-            Vector3 obstaclePosition = Vector3.zero;
-            Vector3 toLook = Vector3.zero;
-
-            if (isLeftNarrowHit)
-            {
-                obstaclePosition = leftNarrowHit.transform.position;
-                toLook = transform.right;
-            }
-            else if (isRightNarrowHit)
-            {
-                obstaclePosition = rightNarrowHit.transform.position;
-                toLook = -transform.right;
-            }
-
-            Vector3 direction = obstaclePosition - transform.position;
-            float distance = direction.sqrMagnitude;
-
-            if (distance < sqrKeepDistSlow / 3)
-            {
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(toLook), rotationSpeed * Time.deltaTime);
-            }
-            else
-            {
-                switchState(StateList.moving);
-            }
-            transform.Translate(0.0f, 0.0f, Time.deltaTime * speed);
-        }*/
 
     // Call this when switch to Stop State
     public void SetStop(GameObject target)

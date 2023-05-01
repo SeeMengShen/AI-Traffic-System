@@ -8,12 +8,6 @@ using UnityEditor;
 [DisallowMultipleComponent]
 public class Node : MonoBehaviour
 {
-    //public List<Edge> edgelist = new List<Edge>();
-    //public Node path = null;
-    //private GameObject id;
-    /*	public float xPos;
-		public float yPos;
-		public float zPos;*/
     private float f, g, h;
     private Node cameFrom;
 
@@ -24,15 +18,7 @@ public class Node : MonoBehaviour
         end
     }
 
-    /*public enum ConnectionType
-    {
-        none,
-        entry,
-        exit
-    }*/
-
     public NodeType type;
-    //private ConnectionType connectionType;
 
     [HideInInspector]
     public List<Node> toNode;
@@ -46,11 +32,6 @@ public class Node : MonoBehaviour
             toNode.Clear();
         }
     }
-
-    /*public ConnectionType GetConnectionType()
-    {
-        return connectionType;
-    }*/
 
     public Connection GetConnectionParent()
     {
@@ -76,25 +57,6 @@ public class Node : MonoBehaviour
     {
         return cameFrom;
     }
-
-    /*public void SetConnectionType(int index)
-    {
-        switch (index)
-        {
-            case 0:
-                connectionType = Node.ConnectionType.none;
-                break;
-            case 1:
-                connectionType = Node.ConnectionType.entry;
-                break;
-            case 2:
-                connectionType = Node.ConnectionType.exit;
-                break;
-            default:
-                break;
-        }
-
-    }*/
 
     public void SetConnectionParent(Connection parent)
     {

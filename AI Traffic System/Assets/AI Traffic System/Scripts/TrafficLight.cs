@@ -78,6 +78,8 @@ public class TrafficLight : MonoBehaviour
                 v.SwitchState(Vehicle.StateList.moving);
             }
         }
+
+        Debug.DrawRay(transform.position, Vector3.up * 10f, Color.green);
     }
 
     // Check whether the vehicle is within the node with traffic light radius range

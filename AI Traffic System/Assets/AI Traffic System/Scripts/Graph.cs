@@ -7,7 +7,6 @@ public class Graph : MonoBehaviour
     public static Graph Instance;
     List<Edge> edges = new List<Edge>();
     public List<Node> nodes = new List<Node>();
-    //List<Node> pathList = new List<Node>();
 
     void Awake()
     {
@@ -39,63 +38,15 @@ public class Graph : MonoBehaviour
         }
     }
 
-    /*    public void AddNode(GameObject id, bool removeRenderer = true, bool removeCollider = true)
-        {
-            Node node = new Node(id);
-            nodes.Add(node);
-
-            //remove colliders and mesh renderer
-            if (removeCollider)
-                GameObject.Destroy(id.GetComponent<Collider>());
-            if (removeRenderer)
-                GameObject.Destroy(id.GetComponent<Renderer>());
-        }*/
-
-    //public void AddEdge(GameObject fromNode, GameObject toNode)
     void AddEdge(Node from, Node to)
     {
-        /*Node from = findNode(fromNode);
-        Node to = findNode(toNode);*/
-
         if (from != null && to != null)
         {
             Edge e = new Edge(from, to);
             edges.Add(e);
-            //from.edgelist.Add(e);
         }
     }
 
-    /*    Node findNode(GameObject id)
-        {
-            foreach (Node n in nodes)
-            {
-                if (n.getId() == id)
-                    return n;
-            }
-            return null;
-        }
-
-
-        public int getPathLength()
-        {
-            return pathList.Count;
-        }
-
-        public GameObject getPathPoint(int index)
-        {
-            return pathList[index].getId();
-        }
-
-        public void printPath()
-        {
-            foreach (Node n in pathList)
-            {
-                Debug.Log(n.getId().name);
-            }
-        }*/
-
-
-    //public Node[] AStar(GameObject startId, GameObject endId)
     public Node[] AStar(Node start, Node end)
     {
         if (start == null || end == null)
@@ -179,9 +130,6 @@ public class Graph : MonoBehaviour
 
     float Distance(Node a, Node b)
     {
-        /*float dx = a.xPos - b.xPos;
-        float dy = a.yPos - b.yPos;
-        float dz = a.zPos - b.zPos;*/
         if (a == null)
         {
             Debug.Log(a.name);
@@ -222,16 +170,4 @@ public class Graph : MonoBehaviour
         }
         return iteratorCount;
     }
-
-    /*    public void DebugDraw()
-        {
-            //draw edges
-            for (int i = 0; i < edges.Count; i++)
-            {
-                Debug.DrawLine(edges[i].startNode.transform.position, edges[i].endNode.transform.position, Color.red);
-                Vector3 to = (edges[i].startNode.transform.position - edges[i].endNode.transform.position) * 0.05f;
-                Debug.DrawRay(edges[i].endNode.transform.position, to, Color.blue);
-            }
-        }*/
-
 }

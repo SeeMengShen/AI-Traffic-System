@@ -27,18 +27,6 @@ public class ConnectionManager : MonoBehaviour
         GenerateConnections();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void RefreshNodes()
     {
         entryNodes.Clear();
@@ -73,7 +61,6 @@ public class ConnectionManager : MonoBehaviour
             {
                 if (!entryNodes[i].HasSameConnectionParent(exit))
                 {
-                    //Debug.Log(exit.name + ", " + i + ": " + SqrDistanceBetween(entryNodes[i], exit));
                     if (SqrDistanceBetween(entryNodes[i], exit) < shortestDist)
                     {
                         shortestIndex = i;
@@ -84,7 +71,6 @@ public class ConnectionManager : MonoBehaviour
 
             if (!exit.toNode.Contains(entryNodes[shortestIndex]))
             {
-                //Debug.Log(shortestIndex);
                 exit.toNode.Add(entryNodes[shortestIndex]);
             }
         }
