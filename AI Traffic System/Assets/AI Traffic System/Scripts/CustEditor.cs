@@ -2,12 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Unity.VisualScripting.ReorderableList;
-using UnityEditorInternal;
-using Unity.VisualScripting;
 
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditorInternal;
 
 [CanEditMultipleObjects]
 [CustomEditor(typeof(Node))]

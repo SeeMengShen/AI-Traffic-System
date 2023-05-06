@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Search;
 using UnityEngine;
-using UnityEngine.UIElements.Experimental;
 
 public class TrafficLight : MonoBehaviour
 {
